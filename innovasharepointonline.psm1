@@ -1,6 +1,6 @@
 ﻿function Migrate-INDocumentLibrary
 {
-	<#.EXTERNALHELP c:\Users\dschauland\Documents\SAPIEN\PowerShell Studio\Files\SPO\move-doclibfiles.ps1-Help.xml#>
+	<#.EXTERNALHELP c:\Users\dschauland\Documents\SAPIEN\PowerShell Studio\Files\SPO\Migrate-INDocumentLibrary.psm1-Help.xml#>
 	[cmdletbinding()]
 	param (
 		[string]$sharepointURL,
