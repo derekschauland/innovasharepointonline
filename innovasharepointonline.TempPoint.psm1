@@ -1,4 +1,4 @@
-﻿function Migrate-INDocumentLibrary
+﻿function Move-DocLibFiles
 {
 	<#.EXTERNALHELP c:\Users\dschauland\Documents\SAPIEN\PowerShell Studio\Files\SPO\move-doclibfiles.ps1-Help.xml#>
 	[cmdletbinding()]
