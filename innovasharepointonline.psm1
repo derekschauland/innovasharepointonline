@@ -1,13 +1,12 @@
-﻿function Migrate-INDocumentLibrary
+﻿<#.EXTERNALHELP c:\Users\dschauland\Documents\SAPIEN\PowerShell Studio\Files\SPO\innovasharepointonline.psm1-Help.xml#>
+function Migrate-INDocumentLibrary
 {
-	<#.EXTERNALHELP c:\Users\dschauland\Documents\SAPIEN\PowerShell Studio\Files\SPO\Migrate-INDocumentLibrary.psm1-Help.xml#>
+	
 	[cmdletbinding()]
 	param (
 		[string]$sharepointURL,
 		[string]$sourcelibrary,
 		[string]$targetlibrary,
-		
-
 		[switch]$count
 	)
 	$ErrorActionPreference = 'SilentlyContinue'
