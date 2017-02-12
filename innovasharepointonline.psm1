@@ -63,22 +63,6 @@ function Migrate-INDocumentLibrary
 	
 	Start-Log -LogPath $logfilepath -LogName "$logname" -ScriptVersion "1.0.0" | Out-Null
 	
-	
-	<#function split-array
-	{
-		param (
-			[object[]]$input,
-			[int]$splitsize
-		)
-		
-		$length = $input.Length
-		for ($index = 0; $index -lt $length; $index += $splitsize)
-		{
-			,($input[$index..($index+$splitsizw -1)])
-		}
-		
-	}#>
-	
 	function split-array
 	{
 		[CmdletBinding()]
@@ -117,18 +101,6 @@ function Migrate-INDocumentLibrary
 	
 	$filechunks = split-array -collection $files -count 100
 	
-	<#$partNum = 0
-	foreach ($part in $filechunks)
-	{
-		"Hello Part $partNum"
-		foreach ($thing in $part)
-		{
-			$thing
-		}
-		$partNum++
-	}
-	#>
-	
 	if (!$count)
 	{
 		if ($($files.count) -eq 0)
@@ -138,8 +110,8 @@ function Migrate-INDocumentLibrary
 		}
 		else
 		{
-			
-			foreach ($i in $filechunks.count)
+			for ($i = 0; $i -le $($filechunks.count); $i++)
+			#foreach ($i in ($filechunks.count))
 			{
 				foreach ($file in $filechunks[$i])
 				{
@@ -162,15 +134,7 @@ function Migrate-INDocumentLibrary
 		
 	}
 	else
-	{
-	<#		foreach ($file in $files)
-			{
-				$path = $folder + $file.name
-				$targetpath = $target + $file.name
-				
-				move-pnpfile -siterelativeurl $path -targeturl $targetpath -confirm:$false
-			}#>
-		
+	{		
 		Write-verbose "$($files.count) will be moved from $folder to $target. Re-run this command without -count to proceed."
 		Write-LogInfo -LogPath $fulllogpath -Message "[$(time-now)] Count Parameter Specified - $($files.count) will be moved from $folder to $target. Re-run this command without the -count parameter to complete the move."
 	}
