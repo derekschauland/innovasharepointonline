@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <helpItems schema="maml" xmlns="http://msh">
-	<!-- Edited with: SAPIEN PowerShell HelpWriter 2017 v2.1.33-->
+	<!--Edited with: SAPIEN PowerShell HelpWriter 2017 v2.1.33-->
 	<command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10">
 		<!-- Command-->
 		<command:details>
@@ -137,6 +137,13 @@
 				</dev:remarks>
 			</command:example>
 		</command:examples>
+		<maml:relatedLinks>
+			<maml:navigationLink>
+				<maml:linkText>Online Version:</maml:linkText>
+				<maml:uri>https://github.com/derekschauland/innovasharepointonline/blob/master/Migrate-INDocumentLibrary.md</maml:uri>
+			</maml:navigationLink>
+			<!--Links-->
+		</maml:relatedLinks>
 	</command:command>
-	<!-- Edited with: SAPIEN PowerShell HelpWriter 2017 v2.1.33-->
+	<!--Edited with: SAPIEN PowerShell HelpWriter 2017 v2.1.33-->
 </helpItems>

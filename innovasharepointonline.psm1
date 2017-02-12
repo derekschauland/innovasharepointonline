@@ -34,7 +34,7 @@ function Migrate-INDocumentLibrary
 	$folder = $sourcelibrary
 	$target = $targetlibrary
 	
-	$test = get-pnpfolderitem -foldersiterelativeurl $folder -itemtype File -erroraction SilentlyContinue
+	$test = get-pnpfolderitem -foldersiterelativeurl "$folder" -itemtype File -erroraction SilentlyContinue
 	
 	if (!$test)
 	{
@@ -42,7 +42,8 @@ function Migrate-INDocumentLibrary
 	}
 	else
 	{
-		$files = get-pnpfolderitem -foldersiterelativeurl $folder -itemtype File
+		$files = get-pnpfolderitem -foldersiterelativeurl "$folder" -itemtype File
+		Write-Verbose "found $($files.count) files"
 	}
 	
 	function time-now
@@ -110,9 +111,11 @@ function Migrate-INDocumentLibrary
 		}
 		else
 		{
-			for ($i = 0; $i -le $($filechunks.count); $i++)
-			#foreach ($i in ($filechunks.count))
+			#for ($i = 0; $i -le $($filechunks.count); $i++)
+			foreach ($i in ($filechunks.count))
 			{
+				Write-Host "$i is the loop"
+				
 				foreach ($file in $filechunks[$i])
 				{
 					$source = $folder + "/" + $file.name
@@ -160,6 +163,7 @@ function Add-INDocuments
 	
 	Write-Host "Current SharePoint Online Environment: $pnpSite"
 	Write-Host "Current Site within SharePoint Online Environment: $pnpweb"
+	Write-Host "Local Path $path for files"
 	
 	if ($progress)
 	{
@@ -169,7 +173,7 @@ function Add-INDocuments
 			$x++
 			
 			Write-Progress -Activity "Uploading Files" -Status "Percent Complete: " -PercentComplete (($x / $uploads.count) * 100)
-			add-pnpfile -path $file -folder $library
+			add-pnpfile -path $file.fullname -folder $library
 		}
 	}
 	else
@@ -180,7 +184,7 @@ function Add-INDocuments
 			#$x++
 			
 			#Write-Progress -Activity "Uploading Files" -Status "Percent Complete: " -PercentComplete (($x / $uploads.count) * 100)
-			add-pnpfile -path $file -folder $library
+			add-pnpfile -path $file.fullname -folder $library
 		}
 	}
 	
