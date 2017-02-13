@@ -42,7 +42,28 @@ function Migrate-INDocumentLibrary
 	}
 	else
 	{
-		$files = get-pnpfolderitem -foldersiterelativeurl $folder -itemtype File
+		
+		$targetSiteUri = [System.Uri]$sharepointURL
+		
+		$context = (Get-pnpWeb).Context
+		$credentials = $context.Credentials
+		$authenticationCookies = $credentials.GetAuthenticationCookie($targetSiteUri, $true)
+		
+		$webSession = New-Object Microsoft.PowerShell.Commands.WebRequestSession
+		$webSession.Cookies.SetCookies($targetSiteUri, $authenticationCookies)
+		$webSession.Headers.Add("Accept", "application/json;odata=verbose")
+		
+		#$sourcelibrary = "test"
+		$apiUrl = "$sharepointURL" + "_api/web/lists/getByTitle('$sourceLibrary')/Files?`$top=5000"
+		
+		$webRequest = Invoke-WebRequest -Uri $apiUrl -Method Get -WebSession $webSession
+		
+		# Consume the JSON result
+		$jsonLibrary = $webRequest.Content | ConvertFrom-Json
+		
+		$files = $jsonLibrary.d.results
+		
+		#$files = get-pnpfolderitem -foldersiterelativeurl $folder -itemtype File
 	}
 	
 	function time-now
@@ -62,22 +83,6 @@ function Migrate-INDocumentLibrary
 	$fulllogpath = $logfilepath + $logname
 	
 	Start-Log -LogPath $logfilepath -LogName "$logname" -ScriptVersion "1.0.0" | Out-Null
-	
-	
-	<#function split-array
-	{
-		param (
-			[object[]]$input,
-			[int]$splitsize
-		)
-		
-		$length = $input.Length
-		for ($index = 0; $index -lt $length; $index += $splitsize)
-		{
-			,($input[$index..($index+$splitsizw -1)])
-		}
-		
-	}#>
 	
 	function split-array
 	{
@@ -117,18 +122,6 @@ function Migrate-INDocumentLibrary
 	
 	$filechunks = split-array -collection $files -count 100
 	
-	<#$partNum = 0
-	foreach ($part in $filechunks)
-	{
-		"Hello Part $partNum"
-		foreach ($thing in $part)
-		{
-			$thing
-		}
-		$partNum++
-	}
-	#>
-	
 	if (!$count)
 	{
 		if ($($files.count) -eq 0)
@@ -163,13 +156,7 @@ function Migrate-INDocumentLibrary
 	}
 	else
 	{
-	<#		foreach ($file in $files)
-			{
-				$path = $folder + $file.name
-				$targetpath = $target + $file.name
-				
-				move-pnpfile -siterelativeurl $path -targeturl $targetpath -confirm:$false
-			}#>
+	
 		
 		Write-verbose "$($files.count) will be moved from $folder to $target. Re-run this command without -count to proceed."
 		Write-LogInfo -LogPath $fulllogpath -Message "[$(time-now)] Count Parameter Specified - $($files.count) will be moved from $folder to $target. Re-run this command without the -count parameter to complete the move."
