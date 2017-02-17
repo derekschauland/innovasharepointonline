@@ -42,26 +42,30 @@ function Migrate-INDocumentLibrary
 	}
 	else
 	{
+		$sharepointURL = "https://ultraplating.sharepoint.com/test"
 		
-		$targetSiteUri = [System.Uri]$sharepointURL
+		$files = get-pnplistitem -list $folder -query "<view><Query><Where><Eq><FieldRef Name='Title'/><Value Type='Text'></Value></Eq></Where><RowLimit>5000</RowLimit></Query></View>"
+#		$targetSiteUri = [System.Uri]$sharepointURL
+#		
+#		$context = (Get-pnpWeb).Context
+#		$credentials = $context.Credentials
+#		$authenticationCookies = $credentials.GetAuthenticationCookie($targetSiteUri, $true)
+#		
+#		$webSession = New-Object Microsoft.PowerShell.Commands.WebRequestSession
+#		$webSession.Cookies.SetCookies($targetSiteUri, $authenticationCookies)
+#		$webSession.Headers.Add("Accept", "application/json;odata=verbose")
+#		
+#		$sourcelibrary = "SharedDocuments"
+#		$apiUrl = "$sharepointURL" + "/_api/web/lists/getByTitle('$sourceLibrary')/Files?`$top=5000"
+#		
+#		$webRequest = Invoke-WebRequest -Uri $apiUrl -Method Get -WebSession $webSession
+#		
+#		# Consume the JSON result
+#		$jsonLibrary = $webRequest.Content | ConvertFrom-Json
+#		
+#		$files = $jsonLibrary.d.results
 		
-		$context = (Get-pnpWeb).Context
-		$credentials = $context.Credentials
-		$authenticationCookies = $credentials.GetAuthenticationCookie($targetSiteUri, $true)
-		
-		$webSession = New-Object Microsoft.PowerShell.Commands.WebRequestSession
-		$webSession.Cookies.SetCookies($targetSiteUri, $authenticationCookies)
-		$webSession.Headers.Add("Accept", "application/json;odata=verbose")
-		
-		#$sourcelibrary = "test"
-		$apiUrl = "$sharepointURL" + "_api/web/lists/getByTitle('$sourceLibrary')/Files?`$top=5000"
-		
-		$webRequest = Invoke-WebRequest -Uri $apiUrl -Method Get -WebSession $webSession
-		
-		# Consume the JSON result
-		$jsonLibrary = $webRequest.Content | ConvertFrom-Json
-		
-		$files = $jsonLibrary.d.results
+		Write-Host "There are $($files.count) in the Files var now"
 		
 		#$files = get-pnpfolderitem -foldersiterelativeurl $folder -itemtype File
 	}
@@ -84,7 +88,7 @@ function Migrate-INDocumentLibrary
 	
 	Start-Log -LogPath $logfilepath -LogName "$logname" -ScriptVersion "1.0.0" | Out-Null
 	
-	function split-array
+<#	function split-array
 	{
 		[CmdletBinding()]
 		param (
@@ -120,7 +124,7 @@ function Migrate-INDocumentLibrary
 		}
 	}
 	
-	$filechunks = split-array -collection $files -count 100
+#>	#$filechunks = split-array -collection $files -count 100
 	
 	if (!$count)
 	{
@@ -131,8 +135,8 @@ function Migrate-INDocumentLibrary
 		}
 		else
 		{
-			
-			foreach ($i in $filechunks.count)
+		<#	
+		foreach ($i in $filechunks.count)
 			{
 				foreach ($file in $filechunks[$i])
 				{
@@ -144,10 +148,46 @@ function Migrate-INDocumentLibrary
 					Write-Host "$source headed to $targetpath - inside loop" 
 					
 				}
-				
+				#>
 				
 				Write-LogInfo -LogPath $fulllogpath -Message "[$(time-now)] Count Parameter Not Specified - Moved file: $source to $targetpath"
+			#}
+			$counter = 1
+			foreach ($file in $files)
+			{
+				$source = $folder + "/" + $file.__metadata.id
+				$targetpath = $target + "/" + $file.__metadata.id
+				
+				Write-Host "$($source.name) will be moved to $($targetpath.name) - file count is $counter"
+				
+				
+				
+					
+				move-pnpfile -siterelativeurl $source -targeturl $targetpath -force
+				
+				#$sharepointURL = "https://ultraplating.sharepoint.com/test"
+				#$targetSiteUri = [System.Uri]$sharepointURL
+#				
+#				$postcontext = (Get-pnpWeb).Context
+#				$postcredentials = $postcontext.Credentials
+#				$postauthenticationCookies = $postcredentials.GetAuthenticationCookie($targetSiteUri, $true)
+#				
+#				$webSession2 = New-Object Microsoft.PowerShell.Commands.WebRequestSession
+#				$webSession2.Cookies.SetCookies($targetSiteUri, $postauthenticationCookies)
+#				$webSession2.Headers.Add("Accept", "application/json;odata=verbose")
+#				
+#				#$sourcelibrary = "SharedDocuments"
+#				$postapiUrl = "$sharepointURL" + "/_api/web/lists/getByTitle('$targetlibrary')/"
+#				
+#				$postwebRequest = Invoke-WebRequest -Uri $postapiUrl -Method Post -WebSession $webSession2
+#				
+#				# Consume the JSON result
+#				#$jsonLibrary2 = $postwebRequest.Content | ConvertFrom-Json
+#				
+#				#$files = $jsonLibrary.d.results
+				$counter++
 			}
+			
 			Write-verbose "$($files.count) files have been moved from $folder to $target"
 			Write-LogInfo -LogPath $fulllogpath -Message "[$(time-now)] Count Parameter Not Specified -  Moved $($files.count) from $folder to $target"
 			
@@ -156,8 +196,6 @@ function Migrate-INDocumentLibrary
 	}
 	else
 	{
-	
-		
 		Write-verbose "$($files.count) will be moved from $folder to $target. Re-run this command without -count to proceed."
 		Write-LogInfo -LogPath $fulllogpath -Message "[$(time-now)] Count Parameter Specified - $($files.count) will be moved from $folder to $target. Re-run this command without the -count parameter to complete the move."
 	}
