@@ -44,7 +44,9 @@ function Migrate-INDocumentLibrary
 	{
 		$sharepointURL = "https://ultraplating.sharepoint.com/test"
 		
-		$files = get-pnplistitem -list $folder -query "<view><Query><Where><Eq><FieldRef Name='Title'/><Value Type='Text'></Value></Eq></Where><RowLimit>5000</RowLimit></Query></View>"
+		$query = "<view><RowLimit>5000</RowLimit></View>"
+		
+		$files = get-pnplistitem -list $folder -query $query
 #		$targetSiteUri = [System.Uri]$sharepointURL
 #		
 #		$context = (Get-pnpWeb).Context
@@ -155,10 +157,10 @@ function Migrate-INDocumentLibrary
 			$counter = 1
 			foreach ($file in $files)
 			{
-				$source = $folder + "/" + $file.__metadata.id
-				$targetpath = $target + "/" + $file.__metadata.id
+				$source = $folder + "/" + $file
+				$targetpath = $target + "/" + $file
 				
-				Write-Host "$($source.name) will be moved to $($targetpath.name) - file count is $counter"
+				Write-Host "$($source.title) will be moved to $($targetpath.title) - file count is $counter"
 				
 				
 				
